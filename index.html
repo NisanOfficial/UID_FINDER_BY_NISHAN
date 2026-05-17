@@ -5,52 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Instagram User ID Finder</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
 body {
   background: #0ea5e9;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: Arial, sans-serif;
+  margin: 0;
   padding: 20px;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
-.container {
+.wrap {
   width: 100%;
   max-width: 500px;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 h1 {
   color: #fff;
   text-align: center;
-  font-size: 22px;
-  margin-bottom: 25px;
-  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 20px;
 }
 .card {
   background: #fff;
   border-radius: 20px;
-  padding: 30px 25px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  padding: 25px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
-.input-box {
+.input-row {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
 }
 input {
   flex: 1;
-  padding: 12px 15px;
-  border: 2px solid #e5e7eb;
+  padding: 12px;
+  border: 2px solid #ddd;
   border-radius: 10px;
   font-size: 15px;
   outline: none;
 }
-input:focus {
-  border-color: #0ea5e9;
-}
+input:focus { border-color: #0ea5e9; }
 button {
-  padding: 12px 20px;
+  padding: 12px 18px;
   background: #0ea5e9;
   color: #fff;
   border: none;
@@ -58,21 +54,24 @@ button {
   font-weight: 600;
   cursor: pointer;
 }
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+button:disabled { opacity: 0.6; }
 .label {
   color: #0ea5e9;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   margin-top: 18px;
-  margin-bottom: 5px;
 }
 .value {
   font-size: 18px;
-  color: #111827;
+  color: #111;
   font-weight: 600;
+  margin-top: 4px;
+}
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
 }
 .username {
   display: inline-block;
@@ -82,68 +81,53 @@ button:disabled {
   padding: 5px 10px;
   border-radius: 8px;
 }
-.copy-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 8px;
+.msg {
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 15px;
+  text-align: center;
+  display: none;
 }
-.share-icons {
+.loading { background: #f3f4f6; color: #374151; }
+.error { background: #fee2e2; color: #dc2626; }
+.result { display: none; }
+.share {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   margin-top: 15px;
 }
-.share-icons button {
-  width: 40px;
-  height: 40px;
-  padding: 0;
+.share button {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.loading {
-  text-align: center;
-  color: #6b7280;
-  padding: 20px;
-}
-.error {
-  color: #ef4444;
-  text-align: center;
-  padding: 15px;
-  background: #fee2e2;
-  border-radius: 10px;
-}
-.result {
-  display: none;
+  padding: 0;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="wrap">
   <h1>INSTAGRAM USER ID & ACCOUNT INFORMATION</h1>
   
   <div class="card">
-    <div class="input-box">
-      <input type="text" id="username" placeholder="Enter username without @">
-      <button id="searchBtn" onclick="getUserData()">Search</button>
+    <div class="input-row">
+      <input type="text" id="user" placeholder="Enter username">
+      <button id="btn" onclick="search()">Search</button>
     </div>
 
-    <div id="loading" class="loading" style="display:none;">Loading...</div>
-    <div id="error" class="error" style="display:none;"></div>
+    <div id="load" class="msg loading">Loading...</div>
+    <div id="err" class="msg error"></div>
 
-    <div id="result" class="result">
+    <div id="res" class="result">
       <div class="label">INSTAGRAM ID</div>
       <div class="value">
-        <span id="userid">-</span>
-        <button class="copy-btn" onclick="copyText('userid')">📋</button>
+        <span id="uid">-</span>
+        <button class="copy-btn" onclick="copy('uid')">📋</button>
       </div>
 
       <div class="label">INSTAGRAM USERNAME</div>
       <div class="value">
-        <a id="userlink" class="username" href="#" target="_blank">@-</a>
+        <a id="ulink" class="username" href="#" target="_blank">@-</a>
       </div>
 
       <div class="label">FOLLOWER COUNT</div>
@@ -153,68 +137,89 @@ button:disabled {
       <div class="value" id="following">-</div>
 
       <div class="label">SHARE OR COPY INSTAGRAM ID</div>
-      <div class="share-icons">
+      <div class="share">
         <button style="background:#000" onclick="share('x')">𝕏</button>
         <button style="background:#25D366" onclick="share('wa')">💬</button>
-        <button style="background:#000" onclick="share('copy')">📋</button>
+        <button style="background:#333" onclick="share('copy')">📋</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-async function getUserData() {
-  const username = document.getElementById('username').value.trim().replace('@', '');
-  if(!username) return alert('Username dao');
-
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('result').style.display = 'none';
-  document.getElementById('error').style.display = 'none';
-  document.getElementById('searchBtn').disabled = true;
+async function search() {
+  let u = document.getElementById('user').value.trim().replace('@','');
+  if(!u) return alert('Username dao');
+  
+  toggle('load', true);
+  toggle('res', false);
+  toggle('err', false);
+  document.getElementById('btn').disabled = true;
 
   try {
-    // Using allorigins proxy to bypass CORS and fetch public profile
-    const url = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.instagram.com/' + username + '/?__a=1&__d=dis')}`;
-    const res = await fetch(url);
-    const data = await res.json();
+    // Try multiple public proxies
+    let data = await fetchData(u);
     
-    const json = JSON.parse(data.contents);
-    const user = json.graphql.user;
-
-    document.getElementById('userid').textContent = user.id;
-    document.getElementById('userlink').textContent = '@' + user.username;
-    document.getElementById('userlink').href = 'https://instagram.com/' + user.username;
-    document.getElementById('followers').textContent = user.edge_followed_by.count;
-    document.getElementById('following').textContent = user.edge_follow.count;
-
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('result').style.display = 'block';
+    document.getElementById('uid').textContent = data.id;
+    document.getElementById('ulink').textContent = '@' + data.username;
+    document.getElementById('ulink').href = 'https://instagram.com/' + data.username;
+    document.getElementById('followers').textContent = data.followers;
+    document.getElementById('following').textContent = data.following;
+    
+    toggle('load', false);
+    toggle('res', true);
   } catch(e) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('error').style.display = 'block';
-    document.getElementById('error').textContent = 'User pawa jayni. Private account ba vul username hote pare.';
+    toggle('load', false);
+    document.getElementById('err').textContent = 'User pawa jayni. Private account ba vul username hote pare.';
+    toggle('err', true);
   }
   
-  document.getElementById('searchBtn').disabled = false;
+  document.getElementById('btn').disabled = false;
 }
 
-function copyText(id) {
-  const text = document.getElementById(id).textContent;
-  navigator.clipboard.writeText(text);
-  alert('Copied: ' + text);
-}
+async function fetchData(username) {
+  // Proxy 1
+  try {
+    let r = await fetch(`https://api.allorigins.win/raw?url=https://i.instagram.com/api/v1/users/web_profile_info/?username=${username}`);
+    let j = await r.json();
+    if(j.data && j.data.user) {
+      return {
+        id: j.data.user.id,
+        username: j.data.user.username,
+        followers: j.data.user.edge_followed_by.count,
+        following: j.data.user.edge_follow.count
+      };
+    }
+  } catch(e) {}
 
-function share(platform) {
-  const id = document.getElementById('userid').textContent;
-  const text = `Instagram ID: ${id}`;
+  // Proxy 2 - fallback
+  let r2 = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.instagram.com/'+username+'/?__a=1&__d=dis')}`);
+  let d2 = await r2.json();
+  let j2 = JSON.parse(d2.contents);
+  let u = j2.graphql.user;
   
-  if(platform === 'x') {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`);
-  } else if(platform === 'wa') {
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-  } else if(platform === 'copy') {
-    copyText('userid');
-  }
+  return {
+    id: u.id,
+    username: u.username,
+    followers: u.edge_followed_by.count,
+    following: u.edge_follow.count
+  };
+}
+
+function toggle(id, show) {
+  document.getElementById(id).style.display = show ? 'block' : 'none';
+}
+
+function copy(id) {
+  navigator.clipboard.writeText(document.getElementById(id).textContent);
+  alert('Copied!');
+}
+
+function share(type) {
+  let txt = 'Instagram ID: ' + document.getElementById('uid').textContent;
+  if(type==='x') window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(txt));
+  if(type==='wa') window.open('https://wa.me/?text='+encodeURIComponent(txt));
+  if(type==='copy') copy('uid');
 }
 </script>
 
