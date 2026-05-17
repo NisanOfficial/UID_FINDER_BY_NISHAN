@@ -12,10 +12,14 @@ body {
   font-family: 'Segoe UI', sans-serif;
   padding: 20px;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 .container {
+  width: 100%;
   max-width: 600px;
-  margin: 0 auto;
+  margin-top: 40px;
   background: #1a1a1a;
   padding: 30px;
   border-radius: 15px;
@@ -30,38 +34,10 @@ h1 {
 .subtitle {
   text-align: center;
   color: #888;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   font-size: 14px;
 }
-.tab-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-.tab-btn {
-  flex: 1;
-  padding: 12px;
-  background: #2a2a2a;
-  border: 1px solid #444;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-  min-width: 100px;
-}
-.tab-btn.active {
-  background: #00ffc8;
-  color: #000;
-  border-color: #00ffc8;
-}
-.tab-content {
-  display: none;
-}
-.tab-content.active {
-  display: block;
-}
-input, textarea {
+select, input, textarea {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
@@ -70,6 +46,9 @@ input, textarea {
   border-radius: 8px;
   color: #fff;
   font-size: 15px;
+}
+select {
+  cursor: pointer;
 }
 button {
   width: 100%;
@@ -85,6 +64,13 @@ button {
 }
 button:hover {
   background: #00d4a8;
+}
+.platform-box {
+  display: none;
+  margin-top: 20px;
+}
+.platform-box.active {
+  display: block;
 }
 .result {
   margin-top: 20px;
@@ -117,105 +103,102 @@ button:hover {
 
 <div class="container">
   <h1>UID Finder Panel</h1>
-  <p class="subtitle">Username/Link diye User ID ber koro bot admin er jonno</p>
+  <p class="subtitle">Jeitar UID lagbe select koro</p>
 
-  <div class="tab-buttons">
-    <button class="tab-btn active" onclick="switchTab('tg')">Telegram</button>
-    <button class="tab-btn" onclick="switchTab('yt')">YouTube</button>
-    <button class="tab-btn" onclick="switchTab('fb')">Facebook</button>
-    <button class="tab-btn" onclick="switchTab('ig')">Instagram</button>
-    <button class="tab-btn" onclick="switchTab('wp')">WhatsApp</button>
-  </div>
+  <select id="platform" onchange="showPlatform()">
+    <option value="">-- Select Platform --</option>
+    <option value="tg">Telegram</option>
+    <option value="yt">YouTube</option>
+    <option value="fb">Facebook</option>
+    <option value="ig">Instagram</option>
+    <option value="wp">WhatsApp</option>
+  </select>
 
   <!-- Telegram -->
-  <div id="tg" class="tab-content active">
-    <input type="text" id="tg-input" placeholder="@username or forward a message to @userinfobot">
+  <div id="tg" class="platform-box">
+    <input type="text" id="tg-input" placeholder="@username">
     <button onclick="getTelegramID()">Get Telegram ID</button>
     <div id="tg-result"></div>
     <div class="info">
-      <strong>Method 1:</strong> Telegram e @userinfobot search kore oi chat e jao, tarpor jar ID lagbe tar kono message forward koro. Bot ID diye dibe.<br>
-      <strong>Method 2:</strong> Nijer ID pete @userinfobot e "/start" dao.
+      <strong>Fastest way:</strong> @userinfobot e jao, jar ID lagbe tar message forward koro. Bot instant ID diye dibe.
     </div>
   </div>
 
   <!-- YouTube -->
-  <div id="yt" class="tab-content">
+  <div id="yt" class="platform-box">
     <input type="text" id="yt-input" placeholder="Channel URL or @username">
-    <input type="text" id="yt-key" placeholder="YouTube API Key (required)">
+    <input type="text" id="yt-key" placeholder="YouTube API Key">
     <button onclick="getYouTubeID()">Get Channel ID</button>
     <div id="yt-result"></div>
     <div class="info">
-      YouTube API key lagbe. Google Cloud Console theke free key banate paro. 
-      10,000 request/day free.
+      Google Cloud Console theke free API key nao. 10,000 request/day free.
     </div>
   </div>
 
   <!-- Facebook -->
-  <div id="fb" class="tab-content">
-    <input type="text" id="fb-input" placeholder="Profile URL or username">
-    <button onclick="getFacebookID()">Get Facebook ID</button>
+  <div id="fb" class="platform-box">
+    <input type="text" id="fb-input" placeholder="Profile URL">
+    <button onclick="getFacebookID()">How to Get ID</button>
     <div id="fb-result"></div>
     <div class="info">
-      <strong>Easy way:</strong> Profile e jao, right click > View Page Source. Ctrl+F diye "profile_id" search koro. 
-      Oitai UID.<br>
-      <strong>Note:</strong> Meta er API public ID deyna privacy er jonno.
+      <strong>Steps:</strong><br>
+      1. Profile e jao<br>
+      2. Right click > View Page Source<br>
+      3. Ctrl+F diye "profile_id" search koro<br>
+      4. 15 digit number tai UID
     </div>
   </div>
 
   <!-- Instagram -->
-  <div id="ig" class="tab-content">
-    <input type="text" id="ig-input" placeholder="Username or profile link">
-    <button onclick="getInstagramID()">Get Instagram ID</button>
+  <div id="ig" class="platform-box">
+    <input type="text" id="ig-input" placeholder="Username">
+    <button onclick="getInstagramID()">How to Get ID</button>
     <div id="ig-result"></div>
     <div class="info">
-      <strong>Easy way:</strong> Profile e jao, right click > View Page Source. Ctrl+F diye "profilePage_" search koro. 
-      17 digit number tai UID.<br>
-      <strong>Note:</strong> Instagram public API close kore dise. Manual method use korte hoy.
+      <strong>Steps:</strong><br>
+      1. Profile e jao<br>
+      2. Right click > View Page Source<br>
+      3. Ctrl+F diye "profilePage_" search koro<br>
+      4. Otar pore 17 digit number tai UID
     </div>
   </div>
 
   <!-- WhatsApp -->
-  <div id="wp" class="tab-content">
+  <div id="wp" class="platform-box">
     <input type="text" id="wp-input" placeholder="Phone number with country code">
     <button onclick="getWhatsAppID()">Get WhatsApp ID</button>
     <div id="wp-result"></div>
     <div class="info">
-      WhatsApp number ke just "+8801XXXXXXXXX@s.whatsapp.net" format e convert koro. 
-      Eitai WhatsApp ID. No API needed.
+      Number ke format koro: 88017XXXXXXXX@s.whatsapp.net<br>
+      Eitai WhatsApp ID for bot.
     </div>
   </div>
 </div>
 
 <script>
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById(tab).classList.add('active');
+function showPlatform() {
+  const val = document.getElementById('platform').value;
+  document.querySelectorAll('.platform-box').forEach(box => box.classList.remove('active'));
+  if(val) document.getElementById(val).classList.add('active');
 }
 
 function showResult(id, content, isError=false) {
   document.getElementById(id).innerHTML = `<div class="result ${isError ? 'error' : ''}">${content}</div>`;
 }
 
-// Telegram - use @userinfobot method
+// Telegram
 function getTelegramID() {
   const input = document.getElementById('tg-input').value.trim();
   if(!input) return showResult('tg-result', 'Username dao', true);
   
-  if(input.startsWith('@')) {
-    showResult('tg-result', `
-      <strong>Username:</strong> ${input}<br>
-      <strong>Step:</strong> @userinfobot e jao, ei username er kono message forward koro. 
-      Bot ID reply korbe.<br>
-      <div class="note">Direct API diye UID ana jay na privacy er jonno.</div>
-    `);
-  } else {
-    showResult('tg-result', 'Valid @username dao', true);
-  }
+  showResult('tg-result', `
+    <strong>Username:</strong> ${input}<br>
+    <strong>Step:</strong> @userinfobot e jao, ei user er kono message forward koro. 
+    Bot ID reply korbe. Oitai UID.
+  `);
 }
 
-// YouTube - requires API key
+// YouTube
 async function getYouTubeID() {
   const input = document.getElementById('yt-input').value.trim();
   const key = document.getElementById('yt-key').value.trim();
@@ -229,62 +212,48 @@ async function getYouTubeID() {
     const data = await res.json();
     
     if(data.items && data.items.length > 0) {
-      showResult('yt-result', `
-        <strong>Channel ID:</strong> ${data.items[0].id}<br>
-        <strong>Copy this for bot admin</strong>
-      `);
+      showResult('yt-result', `<strong>Channel ID:</strong> ${data.items[0].id}`);
     } else {
-      showResult('yt-result', 'Channel pawa jayni. Valid @username or URL dao', true);
+      showResult('yt-result', 'Channel pawa jayni', true);
     }
   } catch(e) {
-    showResult('yt-result', 'Error: Invalid API key or limit exceed', true);
+    showResult('yt-result', 'Error: Invalid API key', true);
   }
 }
 
-// Facebook - manual method only
+// Facebook
 function getFacebookID() {
   const input = document.getElementById('fb-input').value.trim();
   if(!input) return showResult('fb-result', 'URL dao', true);
   
   showResult('fb-result', `
-    <strong>Steps:</strong><br>
-    1. Profile e jao<br>
-    2. Right click > View Page Source<br>
-    3. Ctrl+F diye "profile_id" search koro<br>
-    4. 15 digit number tai UID<br>
-    <div class="note">Direct API diye pawa jay na.</div>
+    <strong>Profile URL:</strong> ${input}<br>
+    Uporer steps follow koro UID pete.
   `);
 }
 
-// Instagram - manual method only  
+// Instagram
 function getInstagramID() {
   const input = document.getElementById('ig-input').value.trim();
   if(!input) return showResult('ig-result', 'Username dao', true);
   
   showResult('ig-result', `
-    <strong>Steps:</strong><br>
-    1. Profile e jao<br>
-    2. Right click > View Page Source<br>
-    3. Ctrl+F diye "profilePage_" search koro<br>
-    4. Otar pore 17 digit number tai UID<br>
-    <div class="note">Instagram 2024 theke public API bondho kore dise.</div>
+    <strong>Username:</strong> ${input}<br>
+    Uporer steps follow koro UID pete.
   `);
 }
 
-// WhatsApp - format conversion
+// WhatsApp
 function getWhatsAppID() {
   const input = document.getElementById('wp-input').value.trim();
   if(!input) return showResult('wp-result', 'Number dao', true);
   
   let number = input.replace(/\+|\s|-/g, '');
-  if(!number.startsWith('880') && !number.startsWith('1')) {
+  if(!number.startsWith('880') && number.length < 11) {
     return showResult('wp-result', 'Country code soho dao. Ex: 88017XXXXXXXX', true);
   }
   
-  showResult('wp-result', `
-    <strong>WhatsApp ID:</strong> ${number}@s.whatsapp.net<br>
-    <strong>Copy this for bot admin</strong>
-  `);
+  showResult('wp-result', `<strong>WhatsApp ID:</strong> ${number}@s.whatsapp.net`);
 }
 </script>
 
